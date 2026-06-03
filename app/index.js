@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar';
 import BottomBar from '../components/BottomBar';
 import NavBar from '../components/NavBar';
 import Countdown from '../components/Countdown';
+import { loadChannels } from '../constants/channels';
 import { fetchLiveMatches } from '../services/api';
 import { COLORS } from '../constants/theme';
 
@@ -26,7 +27,11 @@ export default function LiveMatch() {
 
   useFocusEffect(
     useCallback(() => {
-      return () => setFocusKey((k) => k + 1);
+      let active = true;
+      loadChannels(true).then(() => {
+        if (active) setFocusKey((k) => k + 1);
+      });
+      return () => { active = false; };
     }, [])
   );
 
