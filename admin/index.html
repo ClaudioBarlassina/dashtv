@@ -152,6 +152,13 @@ tbody td { padding: 12px 14px; border-bottom: 1px solid #1A1A1A; font-size: 14px
             <label style="color:#A0A0A0;font-size:12px;display:block;margin-bottom:4px;">Nota</label>
             <input type="text" id="newChannelNote" placeholder="Ej: Disponible en HD" style="padding:10px 14px;background:#0A0A0A;border:1px solid #333;border-radius:6px;color:#FFF;font-size:14px;outline:none;min-width:140px;">
           </div>
+          <div>
+            <label style="color:#A0A0A0;font-size:12px;display:block;margin-bottom:4px;">&nbsp;</label>
+            <label style="color:#A0A0A0;font-size:13px;display:flex;align-items:center;gap:4px;cursor:pointer;">
+              <input type="checkbox" id="newChannelNoProxy">
+              Sin proxy
+            </label>
+          </div>
           <button class="btn btn-gold" onclick="addChannel()" style="align-self:end;">Agregar</button>
           <button class="btn btn-outline" onclick="hideAddChannel()" style="align-self:end;">Cancelar</button>
         </div>
@@ -361,6 +368,10 @@ async function renderChannels() {
       </div>
       <input type="text" value="${ch.streamUrl || ''}" placeholder="URL del stream (m3u8)" data-index="${i}" onchange="updateChannel(${i}, this.value)">
       <div class="actions">
+        <label style="color:#A0A0A0;font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" ${ch.noProxy ? 'checked' : ''} onchange="toggleProxy(${i}, this.checked)">
+          Proxy
+        </label>
         <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="clearChannel(${i})">Limpiar</button>
         <button class="btn btn-danger" style="padding:6px 12px;font-size:12px;" onclick="deleteChannel(${i})">Eliminar</button>
       </div>
@@ -375,6 +386,10 @@ function updateChannel(idx, value) {
 function clearChannel(idx) {
   if (channelsData[idx]) channelsData[idx].streamUrl = null;
   renderChannels();
+}
+
+function toggleProxy(idx, checked) {
+  if (channelsData[idx]) channelsData[idx].noProxy = checked;
 }
 
 async function saveChannels() {
@@ -409,15 +424,17 @@ function addChannel() {
   if (!id) id = name.toLowerCase().replace(/[^a-z0-9]/g, '');
   const country = document.getElementById('newChannelCountry').value.trim() || null;
   const note = document.getElementById('newChannelNote').value.trim() || null;
+  const noProxy = document.getElementById('newChannelNoProxy').checked;
   if (channelsData.find((c) => c.id === id)) {
     showToast('Ya existe un canal con ese ID', 'error');
     return;
   }
-  channelsData.push({ id, name, country, logo: null, streamUrl: null, note });
+  channelsData.push({ id, name, country, logo: null, streamUrl: null, note, noProxy });
   document.getElementById('newChannelName').value = '';
   document.getElementById('newChannelId').value = '';
   document.getElementById('newChannelCountry').value = '';
   document.getElementById('newChannelNote').value = '';
+  document.getElementById('newChannelNoProxy').checked = false;
   hideAddChannel();
   renderChannels();
   showToast(`Canal "${name}" agregado`, 'success');

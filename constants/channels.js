@@ -4,8 +4,9 @@ const IS_WEB = typeof window !== 'undefined' && !!window.document;
 const PROXY_BASE = 'https://dashtv.onrender.com';
 
 // En web el proxy va a Render. En native (APK) la URL se usa directa.
-function proxyUrl(url) {
-  if (!url || !IS_WEB) return url;
+// Cada canal puede tener noProxy:true para saltar el proxy
+function proxyUrl(url, noProxy) {
+  if (!url || !IS_WEB || noProxy) return url;
   return `${PROXY_BASE}/proxy/video?url=${encodeURIComponent(url)}`;
 }
 
@@ -29,7 +30,7 @@ export async function loadChannels(force = false) {
       CHANNELS.length = 0;
       CHANNELS.push(...server.map((ch) => ({
         ...ch,
-        streamUrl: proxyUrl(ch.streamUrl),
+        streamUrl: proxyUrl(ch.streamUrl, ch.noProxy),
       })));
     }
   } catch {}
