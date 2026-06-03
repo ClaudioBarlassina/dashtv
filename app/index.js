@@ -174,7 +174,7 @@ export default function LiveMatch() {
                   <VideoPanel
                     key={`split-a-${focusKey}`}
                     match={matchA} channelId={channelA} onChannelChange={setChannelA}
-                    onFocus={() => setFocused('A')} focused={focused === 'A'} muted={false}
+                    onFocus={() => setFocused('A')} focused={focused === 'A'} muted={focused !== 'A'}
                   />
                 </View>
                 {!compact && <View style={styles.divider} />}
@@ -182,7 +182,7 @@ export default function LiveMatch() {
                   <VideoPanel
                     key={`split-b-${focusKey}`}
                     match={matchB} channelId={channelB} onChannelChange={setChannelB}
-                    onFocus={() => setFocused('B')} focused={focused === 'B'} muted
+                    onFocus={() => setFocused('B')} focused={focused === 'B'} muted={focused !== 'B'}
                   />
                 </View>
               </View>
